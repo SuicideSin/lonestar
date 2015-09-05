@@ -3,7 +3,10 @@ Simple read/write server architecture with adjustable permissions heavily influe
 This is still in development.
 
 Superstar Link:
-	https://robotmoose.com/
+	http://robotmoose.com/
+
+Uses Mongoose (included).
+	https://github.com/cesanta/mongoose
 
 How to run:
 	make
