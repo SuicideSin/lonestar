@@ -1,6 +1,4 @@
-Simple read/write web server architecture with adjustable permissions heavily influenced by superstar.
-
-This is still in development.
+A cross platform, simple, read/write driven, web server with adjustable permissions. Heavily influenced by superstar. This is still in development.
 
 Superstar Link:
 	http://robotmoose.com/
@@ -8,7 +6,7 @@ Superstar Link:
 Uses Mongoose (included).
 	https://github.com/cesanta/mongoose
 
-How to run:
+How to build and run:
 	make
 	./lonestar
 
