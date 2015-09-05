@@ -31,7 +31,7 @@ int main(int argc,char* argv[])
 		if(cli.count("help")>0)
 		{
 			std::cout<<"NAME"<<std::endl;
-			std::cout<<"       lonestar - read/write server architecture"<<std::endl;
+			std::cout<<"       lonestar - read/write web server architecture"<<std::endl;
 			std::cout<<std::endl;
 			std::cout<<"SYNOPSIS"<<std::endl;
 			std::cout<<"       lonestar [OPTION]..."<<std::endl;
