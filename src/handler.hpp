@@ -14,49 +14,65 @@ inline void mg_send(mg_connection* connection,const std::string& data,const std:
 		mime.c_str(),data.size(),data.c_str());
 }
 
+inline void mg_send_status(mg_connection* connection,const std::string& status)
+{
+	mg_printf(connection,"HTTP/1.1 %s\r\nContent-Length: 0\r\n\r\n\r\n\r\n",status.c_str());
+}
+
 inline bool handle_read(mg_connection* connection,const std::string& request,const std::string& query)
 {
-	std::string value=get_query(connection,"read");
+	std::string comma_list=get_query(connection,"read");
 
-	if(value.size()>0)
+	if(comma_list.size()>0)
 	{
-		auto database=get_database(connection);
-		std::cout<<"\tReading \""<<value<<"\"..."<<std::flush;
+		auto& database=get_database(connection);
+		std::cout<<"\tReading \""<<comma_list<<"\"..."<<std::flush;
 
 		if((database.permissions&P_READ)!=0)
 		{
-			mg_send(connection,database.read(value),"application/json");
+			mg_send(connection,database.read(comma_list),"application/json");
 			std::cout<<"done."<<std::endl;
-			return true;
 		}
 		else
 		{
+			mg_send_status(connection,"401 UNAUTHORIZED");
 			std::cout<<"denied."<<std::endl;
 		}
+
+		return true;
 	}
 
 	return false;
 }
 
-inline bool handle_write(mg_connection* connection,const std::string& request,const std::string& query)
+inline bool handle_write(mg_connection* connection,const std::string& request,const std::string& query,const std::string& post_data)
 {
-	std::string value=get_query(connection,"write");
+	std::string comma_list=get_query(connection,"write");
 
-	if(value.size()>0)
+	if(comma_list.size()>0)
 	{
-		auto database=get_database(connection);
-		std::cout<<"\tWriting \""<<value<<"\"..."<<std::flush;
+		auto& database=get_database(connection);
+		std::cout<<"\tWriting \""<<comma_list<<"\"..."<<std::flush;
 
 		if((database.permissions&P_WRITE)!=0)
 		{
-			//mg_send(connection,database.read(value),"application/json");
-			std::cout<<"done."<<std::endl;
-			return true;
+			if(!database.write(comma_list,post_data))
+			{
+				mg_send_status(connection,"400 BAD REQUEST");
+				std::cout<<"malformed."<<std::endl;
+			}
+			else
+			{
+				std::cout<<"done."<<std::endl;
+			}
 		}
 		else
 		{
+			mg_send_status(connection,"401 UNAUTHORIZED");
 			std::cout<<"denied."<<std::endl;
 		}
+
+		return true;
 	}
 
 	return false;
@@ -74,6 +90,7 @@ inline int client_handler(mg_connection* connection,mg_event event)
 			if(std::string(connection->http_headers[ii].name)=="X-Forwarded-For")
 				client=connection->http_headers[ii].value;
 
+		std::string method=(connection->request_method);
 		std::string request(connection->uri);
 
 		std::string query;
@@ -85,14 +102,21 @@ inline int client_handler(mg_connection* connection,mg_event event)
 			std::cout<<" false";
 		else
 			std::cout<<" true";
-		std::cout<<" GET "<<request;
-		if(query.size()>0)
-			std::cout<<" \""<<query<<"\"."<<std::endl;
+		std::cout<<" "<<method<<" "<<request<<"."<<std::endl;
+		std::cout<<"\tQuery:  \""<<query<<"\""<<std::endl;
+
+		bool wrote=false;
+
+		if(method=="POST")
+		{
+			std::string post_data(connection->content,connection->content_len);
+			std::cout<<"\tPost:  \""<<post_data<<"\""<<std::endl;
+			wrote=handle_write(connection,request,query,post_data);
+		}
 
 		bool read=handle_read(connection,request,query);
-		bool wrote=handle_write(connection,request,query);
 
-		if(read|wrote)
+		if(wrote||read)
 			return MG_TRUE;
 	}
 
