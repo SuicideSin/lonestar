@@ -26,9 +26,10 @@ Optional Arguments:
 	Help shows a help menu similar to this.
 
 Examples:
-	Run lonestar on localhost:8081 with read/write permissions:
-		./lonestar --ip 127.0.0.1 --port 8081 --permissions 6
+	Run lonestar on localhost:8081 with web root in folder "root" with read/write permissions:
+		./lonestar --ip 127.0.0.1 --port 8081 --web_root root --permissions 6
 
-	Run lonestar on any IP on port 8080 with read only permissions (this is the default option, so the two commands below are equivalent):
-		./lonestar --ip 0.0.0.0 --port 8080 --permissions 4
+	Run lonestar on any IP on port 8080 with web root in folder "web" with read only permissions
+	Note, this is the default option, so the two commands below are equivalent:
+		./lonestar --ip 0.0.0.0 --port 8080 --web_root web --permissions 4
 		./lonestar
