@@ -3,10 +3,10 @@ INC=include
 CXX=g++
 CFLAGS=-O -std=c++11 -Wall -Wno-unused-result -I$(INC)
 
-all: database
+all: lonestar
 
-database: $(SRC)/database.cpp $(INC)/mongoose/mongoose.c
+lonestar: $(SRC)/main.cpp $(INC)/mongoose/mongoose.c
 	$(CXX) $(CFLAGS) $^ -o $@
 
 clean:
-	-rm -rf database
+	-rm -rf lonestar

@@ -7,10 +7,10 @@ Superstar Link:
 
 How to run:
 	make
-	./database
+	./lonestar
 
 Optional:
-	./database --ip X.X.X.X --port X --permissions X
+	./lonestar --ip X.X.X.X --port X --permissions X
 
 	IP is a standard IPv4 address.
 	Port is a standard TCP port (0-65535).
