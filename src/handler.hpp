@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "database.hpp"
 #include "mongoose/mongoose.h"
 #include "permissions.hpp"
 #include "uri.hpp"
@@ -16,7 +17,7 @@ inline bool handle_read(mg_connection* connection,const std::string& request,con
 	{
 		std::cout<<"\tReading \""<<read<<"\"..."<<std::flush;
 
-		if((get_permissions(connection)&P_READ)!=0)
+		if((get_database(connection).permissions&P_READ)!=0)
 		{
 			std::cout<<"done."<<std::endl;
 			return true;
@@ -38,7 +39,7 @@ inline bool handle_write(mg_connection* connection,const std::string& request,co
 	{
 		std::cout<<"\tWriting \""<<write<<"\"..."<<std::flush;
 
-		if((get_permissions(connection)&P_WRITE)!=0)
+		if((get_database(connection).permissions&P_WRITE)!=0)
 		{
 			std::cout<<"done."<<std::endl;
 			return true;

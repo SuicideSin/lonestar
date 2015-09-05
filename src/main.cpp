@@ -3,6 +3,7 @@
 #include <string>
 
 #include "cli.hpp"
+#include "database.hpp"
 #include "handler.hpp"
 #include "mongoose/mongoose.h"
 #include "permissions.hpp"
@@ -60,8 +61,9 @@ int main(int argc,char* argv[])
 		}
 
 		permissions_t permissions=(permissions_t)std::stoi(permissions_string);
+		database_t database(permissions);
 
-		mg_server* server=mg_create_server(&permissions,client_handler);
+		mg_server* server=mg_create_server(&database,client_handler);
 
 		if(server==nullptr)
 		{
