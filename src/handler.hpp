@@ -6,19 +6,26 @@
 
 #include "database.hpp"
 #include "mongoose/mongoose.h"
-#include "permissions.hpp"
 #include "uri.hpp"
+
+inline void mg_send(mg_connection* connection,const std::string& data,const std::string& mime)
+{
+	mg_printf(connection,"HTTP/1.1 200 OK\r\nContent-Type: %s\r\nContent-Length: %ld\r\n\r\n%s",
+		mime.c_str(),data.size(),data.c_str());
+}
 
 inline bool handle_read(mg_connection* connection,const std::string& request,const std::string& query)
 {
-	std::string read=get_query(connection,"read");
+	std::string value=get_query(connection,"read");
 
-	if(read.size()>0)
+	if(value.size()>0)
 	{
-		std::cout<<"\tReading \""<<read<<"\"..."<<std::flush;
+		auto database=get_database(connection);
+		std::cout<<"\tReading \""<<value<<"\"..."<<std::flush;
 
-		if((get_database(connection).permissions&P_READ)!=0)
+		if((database.permissions&P_READ)!=0)
 		{
+			mg_send(connection,database.read(value),"application/json");
 			std::cout<<"done."<<std::endl;
 			return true;
 		}
@@ -33,14 +40,16 @@ inline bool handle_read(mg_connection* connection,const std::string& request,con
 
 inline bool handle_write(mg_connection* connection,const std::string& request,const std::string& query)
 {
-	std::string write=get_query(connection,"write");
+	std::string value=get_query(connection,"write");
 
-	if(write.size()>0)
+	if(value.size()>0)
 	{
-		std::cout<<"\tWriting \""<<write<<"\"..."<<std::flush;
+		auto database=get_database(connection);
+		std::cout<<"\tWriting \""<<value<<"\"..."<<std::flush;
 
-		if((get_database(connection).permissions&P_WRITE)!=0)
+		if((database.permissions&P_WRITE)!=0)
 		{
+			//mg_send(connection,database.read(value),"application/json");
 			std::cout<<"done."<<std::endl;
 			return true;
 		}
@@ -78,8 +87,7 @@ inline int client_handler(mg_connection* connection,mg_event event)
 			std::cout<<" true";
 		std::cout<<" GET "<<request;
 		if(query.size()>0)
-			std::cout<<" "<<query;
-		std::cout<<std::endl;
+			std::cout<<" \""<<query<<"\"."<<std::endl;
 
 		bool read=handle_read(connection,request,query);
 		bool wrote=handle_write(connection,request,query);
