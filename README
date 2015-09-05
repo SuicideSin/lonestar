@@ -6,6 +6,12 @@ Superstar Link:
 Uses Mongoose (included).
 	https://github.com/cesanta/mongoose
 
+Library Dependencies:
+	None.
+
+OS Dependencies:
+	None (well...if you want to use the makefile...then a makefile runner...).
+
 How to build and run:
 	make
 	./lonestar
