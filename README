@@ -1,6 +1,17 @@
 Simple read/write server architecture with adjustable permissions heavily influenced by superstar.
 
-Superstar Link:
-https://robotmoose.com/
-
 This is still in development.
+
+Superstar Link:
+	https://robotmoose.com/
+
+How to run:
+	make
+	./database
+
+Optional:
+	./database --ip X.X.X.X --port X --permissions X
+
+	IP is a standard IPv4 address.
+	Port is a standard TCP port (0-65535).
+	Permissions is a bit field (read=4, write=2, exec=1).
