@@ -5,40 +5,62 @@
 #include <string>
 #include <map>
 
-typedef std::map<std::string,std::string> cli_t;
-
-inline cli_t parse_cli(int argc,char* argv[])
+class cli_t
 {
-	cli_t pairs;
-
-	for(int ii=1;ii<argc;++ii)
-	{
-		std::string key=argv[ii];
-
-		if(key.size()>1&&key[0]=='-'&&key[1]=='-')
+	public:
+		cli_t(int argc,char* argv[])
 		{
-			key=key.substr(2,key.size()-2);
-			std::string value="true";
-
-			if(ii+1<argc)
+			for(int ii=1;ii<argc;++ii)
 			{
-				std::string temp=argv[ii+1];
+				std::string key=argv[ii];
 
-				if(!(temp.size()>1&&temp[0]=='-'&&temp[1]=='-'))
+				if(key.size()>1&&key[0]=='-'&&key[1]=='-')
 				{
-					value=temp;
-					++ii;
+					key=key.substr(2,key.size()-2);
+					std::string value="true";
+
+					if(ii+1<argc)
+					{
+						std::string temp=argv[ii+1];
+
+						if(!(temp.size()>1&&temp[0]=='-'&&temp[1]=='-'))
+						{
+							value=temp;
+							++ii;
+						}
+					}
+
+					pairs_m[key]=value;
+				}
+				else
+				{
+					throw std::runtime_error("Unrecognized cli argument \""+std::string(argv[ii])+"\".");
 				}
 			}
-
-			pairs[key]=value;
 		}
-		else
+
+		void throw_unknown() const
 		{
-			throw std::runtime_error("Unrecognized cli argument \""+std::string(argv[ii])+"\".\n");
+			for(auto key:pairs_m)
+				throw std::runtime_error("Unrecognized cli argument \""+key.first+"\".");
 		}
-	}
 
-	return pairs;
-}
+		size_t count(const std::string& key) const
+		{
+			return pairs_m.count(key);
+		}
+
+		void move(const std::string& key,std::string& destination)
+		{
+			if(pairs_m.count(key)>0)
+			{
+				destination=pairs_m[key];
+				pairs_m.erase(key);
+			}
+		}
+
+	private:
+		std::map<std::string,std::string> pairs_m;
+};
+
 #endif

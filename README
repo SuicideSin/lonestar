@@ -17,11 +17,12 @@ How to build and run:
 	./lonestar
 
 Optional Arguments:
-	./lonestar --ip X.X.X.X --port X --permissions X --help
+	./lonestar --ip X.X.X.X --port X --permissions X --web_root X --help
 
 	IP is a standard IPv4 address.
 	Port is a standard TCP port (0-65535).
 	Permissions is a bit field (read=4, write=2, exec=1).
+	Web root X is the folder where "/" is looked for web requests.
 	Help shows a help menu similar to this.
 
 Examples:
