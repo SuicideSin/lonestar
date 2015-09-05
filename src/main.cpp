@@ -28,6 +28,33 @@ int main(int argc,char* argv[])
 		validate_port(port);
 		validate_permissions(permissions_string);
 
+		if(cli.count("help")>0)
+		{
+			std::cout<<"NAME"<<std::endl;
+			std::cout<<"       lonestar - read/write server architecture"<<std::endl;
+			std::cout<<std::endl;
+			std::cout<<"SYNOPSIS"<<std::endl;
+			std::cout<<"       lonestar [OPTION]..."<<std::endl;
+			std::cout<<std::endl;
+			std::cout<<"DESCRIPTION"<<std::endl;
+			std::cout<<"        --ip host_address"<<std::endl;
+			std::cout<<"              Use host_address on the local machine as the host address of the connection."<<std::endl;
+			std::cout<<"              Only useful on systems with more than one address."<<std::endl;
+			std::cout<<"              Default is:  0.0.0.0"<<std::endl;
+			std::cout<<std::endl;
+			std::cout<<"       --port host_port"<<std::endl;
+			std::cout<<"              Specifies the hosting port lonestar should use, subject to privilege restrictions and availability."<<std::endl;
+			std::cout<<"              Default is: 8080"<<std::endl;
+			std::cout<<std::endl;
+			std::cout<<"       --permissions permissions"<<std::endl;
+			std::cout<<"              Sets access permissions to the lonestar database. Bit field (read=4, write=2, and exec=1)."<<std::endl;
+			std::cout<<"              Default is: 4"<<std::endl;
+			std::cout<<std::endl;
+			std::cout<<"       --help"<<std::endl;
+			std::cout<<"              Show this menu."<<std::endl;
+			return 0;
+		}
+
 		permissions_t permissions=(permissions_t)std::stoi(permissions_string);
 
 		mg_server* server=mg_create_server(&permissions,client_handler);
