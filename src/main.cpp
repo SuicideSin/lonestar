@@ -64,7 +64,7 @@ int main(int argc,char* argv[])
 		mg_set_option(server,"document_root",web_root.c_str());
 
 		std::cout<<"Server started on "<<mg_get_option(server,"listening_port")<<
-		" with web root \""<<web_root<<"\" and ";
+			" with web root \""<<web_root<<"\" and ";
 		if((permissions&P_READ)<=0&&(permissions&P_WRITE)<=0)
 			std::cout<<"no";
 		if((permissions&P_READ)>0)
