@@ -4,6 +4,7 @@
 
 #include "cli.hpp"
 #include "database.hpp"
+#include "file.hpp"
 #include "handler.hpp"
 #include "mongoose/mongoose.h"
 #include "permissions.hpp"
@@ -28,37 +29,16 @@ int main(int argc,char* argv[])
 		validate_port(port);
 		validate_permissions(permissions_string);
 
-		cli.throw_unknown();
-
 		if(cli.count("help")>0)
 		{
-			std::cout<<"NAME"<<std::endl;
-			std::cout<<"       lonestar - A cross platform, simple, read/write driven, web server with adjustable permissions."<<std::endl;
-			std::cout<<std::endl;
-			std::cout<<"SYNOPSIS"<<std::endl;
-			std::cout<<"       lonestar [OPTION]..."<<std::endl;
-			std::cout<<std::endl;
-			std::cout<<"DESCRIPTION"<<std::endl;
-			std::cout<<"        --ip host_address"<<std::endl;
-			std::cout<<"              Use host_address on the local machine as the host address of the connection."<<std::endl;
-			std::cout<<"              Only useful on systems with more than one address."<<std::endl;
-			std::cout<<"              Default is:  0.0.0.0"<<std::endl;
-			std::cout<<std::endl;
-			std::cout<<"       --port host_port"<<std::endl;
-			std::cout<<"              Specifies the hosting port lonestar should use, subject to privilege restrictions and availability."<<std::endl;
-			std::cout<<"              Default is: 8080"<<std::endl;
-			std::cout<<std::endl;
-			std::cout<<"       --permissions permissions"<<std::endl;
-			std::cout<<"              Sets access permissions to the lonestar database. Bit field (read=4, write=2, and exec=1)."<<std::endl;
-			std::cout<<"              Default is: 4"<<std::endl;
-			std::cout<<std::endl;
-			std::cout<<"       --web_root root"<<std::endl;
-			std::cout<<"              Access web_root as \"/\" for web documents."<<std::endl;
-			std::cout<<std::endl;
-			std::cout<<"       --help"<<std::endl;
-			std::cout<<"              Show this menu."<<std::endl;
+			std::cout<<read_file("README")<<std::flush;
+			std::string remove;
+			cli.move("help",remove);
+			cli.throw_unknown();
 			return 0;
 		}
+
+		cli.throw_unknown();
 
 		permissions_t permissions=(permissions_t)std::stoi(permissions_string);
 		database_t database(permissions);
