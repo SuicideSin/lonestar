@@ -6,6 +6,7 @@
 #include "database.hpp"
 #include "file.hpp"
 #include "handler.hpp"
+#include "help.hpp"
 #include "mongoose/mongoose.h"
 #include "permissions.hpp"
 #include "validate.hpp"
@@ -31,7 +32,7 @@ int main(int argc,char* argv[])
 
 		if(cli.count("help")>0)
 		{
-			std::cout<<read_file("README")<<std::flush;
+			print_help();
 			std::string remove;
 			cli.move("help",remove);
 			cli.throw_unknown();

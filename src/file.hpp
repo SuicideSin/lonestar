@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <string>
 
-std::string read_file(const std::string& filename)
+inline std::string read_file(const std::string& filename)
 {
 	std::string file;
 	char buffer;

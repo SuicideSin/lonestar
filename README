@@ -20,6 +20,7 @@ DESCRIPTION
 
 		--web_root root
 				Access web_root as \"/\" for web documents.
+				Default is: web
 
 		--help
 				Show this menu.
