@@ -78,14 +78,11 @@ std::string hash_sha3_512(std::string message)
 		for(size_t round=0;round<24;++round)
 		{
 			uint64_t C[5];
-			uint64_t D[5];
 			for(size_t ii=0;ii<5;++ii)
 				C[ii]=states[ii][0]^states[ii][1]^states[ii][2]^states[ii][3]^states[ii][4];
 			for(size_t ii=0;ii<5;++ii)
-				D[ii]=C[(ii+4)%5]^rotl(C[(ii+1)%5],1);
-			for(size_t ii=0;ii<5;++ii)
 				for(size_t jj=0;jj<5;++jj)
-					states[ii][jj]^=D[ii];
+					states[ii][jj]^=C[(ii+4)%5]^rotl(C[(ii+1)%5],1);
 
 			uint64_t B[5][5];
 			for(size_t ii=0;ii<5;++ii)
