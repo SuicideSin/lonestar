@@ -3,7 +3,6 @@
 #include "hash.hpp"
 
 #include <cstdint>
-#include <stdexcept>
 #include <cstring>
 
 static const uint64_t round_constants[24]=
@@ -99,18 +98,9 @@ std::string hash_sha3_512(std::string message)
 	std::string digest;
 
 	for(size_t yy=0;yy<5;++yy)
-	{
 		for(size_t xx=0;xx<5;++xx)
-		{
-			if(xx+5*yy<9)
-			{
+			if(xx+5*yy<9&&digest.size()<64)
 				digest+=std::string((char*)&states[xx][yy],8);
 
-				if(digest.size()>=64)
-					return digest;
-			}
-		}
-	}
-
-	throw std::runtime_error("Error calculating SHA3-512 hash.");
+	return digest;
 }
