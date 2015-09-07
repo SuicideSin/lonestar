@@ -6,7 +6,6 @@
 #include "database.hpp"
 #include "file.hpp"
 #include "handler.hpp"
-#include "hash.hpp"
 #include "help.hpp"
 #include "mongoose/mongoose.h"
 #include "permissions.hpp"

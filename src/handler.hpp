@@ -5,6 +5,7 @@
 #include <string>
 
 #include "database.hpp"
+#include "hash.hpp"
 #include "mongoose/mongoose.h"
 #include "uri.hpp"
 
@@ -92,16 +93,33 @@ inline int client_handler(mg_connection* connection,mg_event event)
 
 		std::string method=(connection->request_method);
 		std::string request(connection->uri);
+		std::string post_data;
+
+		if(method=="POST")
+			post_data=std::string(connection->content,connection->content_len);
 
 		std::string query;
 		if(connection->query_string!=nullptr)
 			query=connection->query_string;
 
+		bool authenticated=false;
+		std::string auth=get_query(connection,"auth");
+		if(auth.size()>0)
+		{
+				std::string query_no_auth=replace_all(query,"&auth="+auth,"");
+				query_no_auth=replace_all(query_no_auth,"auth="+auth,"");
+				authenticated=(to_hex_string(hmac_sha3_512("key",query_no_auth+post_data))==auth);
+		}
+
 		std::cout<<client;
 		if(client==std::string(connection->remote_ip))
-			std::cout<<" false";
+			std::cout<<" NOLOOKUP";
 		else
-			std::cout<<" true";
+			std::cout<<" LOOKUP  ";
+		if(!authenticated)
+			std::cout<<" NOAUTH";
+		else
+			std::cout<<" AUTH  ";
 		std::cout<<" "<<method<<" "<<request<<"."<<std::endl;
 		std::cout<<"\tQuery:  \""<<query<<"\""<<std::endl;
 
@@ -109,7 +127,6 @@ inline int client_handler(mg_connection* connection,mg_event event)
 
 		if(method=="POST")
 		{
-			std::string post_data(connection->content,connection->content_len);
 			std::cout<<"\tPost:  \""<<post_data<<"\""<<std::endl;
 			wrote=handle_write(connection,request,query,post_data);
 		}

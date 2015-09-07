@@ -55,7 +55,14 @@ class database_t
 				if(json.type()==Json::arrayValue&&list.size()==json.size())
 				{
 					for(size_t ii=0;ii<list.size();++ii)
-						data_m[list[ii]]=json[(int)ii].asString();
+					{
+						std::string value=json[(int)ii].asString();
+
+						if(value=="")
+							data_m.erase(list[ii]);
+						else
+							data_m[list[ii]]=value;
+					}
 
 					return true;
 				}

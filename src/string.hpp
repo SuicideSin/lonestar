@@ -40,4 +40,17 @@ inline std::string to_hex_string(const std::string& str)
 	return ostr.str();
 }
 
+inline std::string replace_all(std::string str,const std::string& find,const std::string& replace)
+{
+	size_t pos=0;
+
+	while((pos=str.find(find,pos))!=std::string::npos)
+	{
+		str.replace(pos,find.size(),replace);
+		pos+=replace.size();
+	}
+
+	return str;
+}
+
 #endif
