@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <cstring>
 
 static const uint64_t round_constants[24]=
 {
@@ -61,10 +62,7 @@ std::string hash_sha3_512(std::string message)
 	}
 
 	uint64_t states[5][5];
-
-	for(size_t yy=0;yy<5;++yy)
-		for(size_t xx=0;xx<5;++xx)
-			states[xx][yy]=0;
+	memset(states,0,8*5*5);
 
 	for(size_t ii=0;ii<message.size()/72;++ii)
 	{
@@ -85,6 +83,7 @@ std::string hash_sha3_512(std::string message)
 					states[ii][jj]^=C[(ii+4)%5]^rotl(C[(ii+1)%5],1);
 
 			uint64_t B[5][5];
+			memset(B,0,8*5*5);
 			for(size_t ii=0;ii<5;++ii)
 				for(size_t jj=0;jj<5;++jj)
 					B[jj][(2*ii+3*jj)%5]=rotl(states[ii][jj],rotation_offsets[ii][jj]);
