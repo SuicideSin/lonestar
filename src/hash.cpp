@@ -104,3 +104,21 @@ std::string hash_sha3_512(std::string message)
 
 	return digest;
 }
+
+std::string hmac_sha3_512(std::string key,const std::string& plain)
+{
+	if(key.size()>64)
+		key=hash_sha3_512(key);
+
+	std::string o_key_pad(64,0x5c);
+	std::string i_key_pad(64,0x36);
+
+	for(size_t ii=0;ii<key.size();++ii)
+	{
+		o_key_pad[ii]^=key[ii];
+		i_key_pad[ii]^=key[ii];
+	}
+
+	std::string hash=hash_sha3_512(i_key_pad+plain);
+	return hash_sha3_512(o_key_pad+hash);
+}
