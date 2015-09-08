@@ -6,7 +6,9 @@
 inline void print_help()
 {
 	std::cout<<"NAME"<<std::endl;
-	std::cout<<"        lonestar - A cross platform, simple, read/write driven, web server with adjustable permissions. Heavily influenced by superstar. This is still in development."<<std::endl;
+	std::cout<<"        lonestar - A cross platform, simple, read/write driven, web server with adjustable permissions."<<std::endl;
+	std::cout<<"                   Heavily influenced by superstar."<<std::endl;
+	std::cout<<"                   This is still in development."<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"SYNOPSIS"<<std::endl;
 	std::cout<<"        lonestar [OPTION]..."<<std::endl;

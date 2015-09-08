@@ -1,94 +1,96 @@
 NAME
-		lonestar - A cross platform, simple, read/write driven, web server with adjustable permissions. Heavily influenced by superstar. This is still in development.
+        lonestar - A cross platform, simple, read/write driven, web server with adjustable permissions.
+                   Heavily influenced by superstar.
+                   This is still in development.
 
 SYNOPSIS
-		lonestar [OPTION]...
+        lonestar [OPTION]...
 
 DESCRIPTION
-		--ip host_address
-				Use host_address on the local machine as the host address of the connection.
-				Only useful on systems with more than one address.
-				Default is:  0.0.0.0
+        --ip host_address
+                Use host_address on the local machine as the host address of the connection.
+                Only useful on systems with more than one address.
+                Default is:  0.0.0.0
 
-		--port host_port
-				Specifies the hosting port lonestar should use, subject to privilege restrictions and availability.
-				Default is: 8080
+        --port host_port
+                Specifies the hosting port lonestar should use, subject to privilege restrictions and availability.
+                Default is: 8080
 
-		--permissions permissions
-				Sets access permissions to the lonestar database. Bit field (read=4, write=2, and exec=1).
-				Default is: 4
+        --permissions permissions
+                Sets access permissions to the lonestar database. Bit field (read=4, write=2, and exec=1).
+                Default is: 4
 
-		--web_root root
-				Access web_root as \"/\" for web documents.
-				Default is: web
+        --web_root root
+                Access web_root as \"/\" for web documents.
+                Default is: web
 
-		--help
-				Show this menu.
+        --help
+                Show this menu.
 
 AUTHENTICATION
-		Lonestar has simple HMAC-SHA3-512 authentication. If no key file is given, then authentication is disabled.
-		To use authentication, you need to make a key file.
+        Lonestar has simple HMAC-SHA3-512 authentication. If no key file is given, then authentication is disabled.
+        To use authentication, you need to make a key file.
 
 RUNNING
-		Run lonestar on localhost:8081 with web root in folder "root" with read/write permissions:
-				./lonestar --ip 127.0.0.1 --port 8081 --web_root root --permissions 6
+        Run lonestar on localhost:8081 with web root in folder "root" with read/write permissions:
+                ./lonestar --ip 127.0.0.1 --port 8081 --web_root root --permissions 6
 
-		Run lonestar on any IP on port 8080 with web root in folder "web" with read only permissions
-		Note, this is the default option, so the two commands below are equivalent:
-				./lonestar --ip 0.0.0.0 --port 8080 --web_root web --permissions 4
-				./lonestar
+        Run lonestar on any IP on port 8080 with web root in folder "web" with read only permissions
+        Note, this is the default option, so the two commands below are equivalent:
+                ./lonestar --ip 0.0.0.0 --port 8080 --web_root web --permissions 4
+                ./lonestar
 
-		To create a key file, run the following:
-				./make_key > my_key.key
+        To create a key file, run the following:
+                ./make_key > my_key.key
 
-		To run lonestar with a key file, run the following:
-				./lonestar --key my_key.key
+        To run lonestar with a key file, run the following:
+                ./lonestar --key my_key.key
 
 WRITING
-		To write, pass a query string of "write" with a comma separated list of values.
-		Pass the values of the comma separated values in the post data as a JSON array.
-		Regardless of the type of objects in the array in the post data, they will be interpreted as strings.
-		Note, writing can only be done with POST data.
-		If there are no write permissions, a 401 UNAUTHORIZED error code will be returned.
-		If the post data is malformed, a 400 BAD REQUEST error code will be returned.
+        To write, pass a query string of "write" with a comma separated list of values.
+        Pass the values of the comma separated values in the post data as a JSON array.
+        Regardless of the type of objects in the array in the post data, they will be interpreted as strings.
+        Note, writing can only be done with POST data.
+        If there are no write permissions, a 401 UNAUTHORIZED error code will be returned.
+        If the post data is malformed, a 400 BAD REQUEST error code will be returned.
 
-		Example:
-				Request URI:  'http://127.0.0.1:8080/?write=a,b'
-				Post String:  '["123","456"]'
+        Example:
+                Request URI:  'http://127.0.0.1:8080/?write=a,b'
+                Post String:  '["123","456"]'
 
-		A javascript library (lonestar.js) has also been included.
-		Below is the example above using this library.
-				var lonestar=new lonestar_t("keyphrase");
-				lonestar.write("a,b",["123","456"],function(response){console.log(response);});
+        A javascript library (lonestar.js) has also been included.
+        Below is the example above using this library.
+                var lonestar=new lonestar_t("keyphrase");
+                lonestar.write("a,b",["123","456"],function(response){console.log(response);});
 
 READING
-		To read, pass a query string of "read" with a comma separated list of values.
-		You will then be returned a JSON array of strings.
-		If a value in the comma separated list does not exist, a value of "" will be returned.
-		If there are no read permissions, a 401 UNAUTHORIZED error code will be returned.
+        To read, pass a query string of "read" with a comma separated list of values.
+        You will then be returned a JSON array of strings.
+        If a value in the comma separated list does not exist, a value of "" will be returned.
+        If there are no read permissions, a 401 UNAUTHORIZED error code will be returned.
 
-		Example (assuming the write example above has happened):
-				Request URI:  'http://127.0.0.1:8080/?read=a,b'
-				Response String:  '["a":"123","b":"456"]'
+        Example (assuming the write example above has happened):
+                Request URI:  'http://127.0.0.1:8080/?read=a,b'
+                Response String:  '["a":"123","b":"456"]'
 
-		Example (assuming the write example above has not happend):
-				Request URI:  'http://127.0.0.1:8080/?read=a,b'
-				Response String:  '["a":"","b":""]'
+        Example (assuming the write example above has not happend):
+                Request URI:  'http://127.0.0.1:8080/?read=a,b'
+                Response String:  '["a":"","b":""]'
 
-		A javascript library (lonestar.js) has also been included.
-		Below are the examples above using this library.
-				var lonestar=new lonestar_t("keyphrase");
-				lonestar.read("a,b",function(response){console.log(response);});
+        A javascript library (lonestar.js) has also been included.
+        Below are the examples above using this library.
+                var lonestar=new lonestar_t("keyphrase");
+                lonestar.read("a,b",function(response){console.log(response);});
 
 BUILDING
-		make
-		./lonestar
+        make
+        ./lonestar
 
 DEPENDENCIES
-		None (well...if you want to use the makefile...then a makefile runner...).
+        None (well...if you want to use the makefile...then a makefile runner...).
 
 LINKS
-		Based on Superstar:        http://robotmoose.com/
-		Uses Mongoose (included):  https://github.com/cesanta/mongoose
-		Uses JSONCPP (included):   https://github.com/open-source-parsers/jsoncpp
-		Uses CryptoJS (included):  https://code.google.com/p/crypto-js/
+        Based on Superstar:        http://robotmoose.com/
+        Uses Mongoose (included):  https://github.com/cesanta/mongoose
+        Uses JSONCPP (included):   https://github.com/open-source-parsers/jsoncpp
+        Uses CryptoJS (included):  https://code.google.com/p/crypto-js/
