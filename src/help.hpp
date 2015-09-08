@@ -38,6 +38,10 @@ inline void print_help()
 	std::cout<<"        Lonestar has simple HMAC-SHA3-512 authentication. If no key file is given, then authentication is disabled."<<std::endl;
 	std::cout<<"        To use authentication, you need to make a key file."<<std::endl;
 	std::cout<<std::endl;
+	std::cout<<"        For the web side, you can attain the nonce by using the following GET request:"<<std::endl;
+	std::cout<<"            Request URI:      'http://127.0.0.1:8080/?nonce=true'"<<std::endl;
+	std::cout<<"            Response String:  Integer nonce value."<<std::endl;
+	std::cout<<std::endl;
 	std::cout<<"RUNNING"<<std::endl;
 	std::cout<<"        Run lonestar on localhost:8081 with web root in folder \"root\" with read/write permissions:"<<std::endl;
 	std::cout<<"                ./lonestar --ip 127.0.0.1 --port 8081 --web_root root --permissions 6"<<std::endl;
@@ -77,11 +81,11 @@ inline void print_help()
 	std::cout<<"        If there are no read permissions, a 401 UNAUTHORIZED error code will be returned."<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"        Example (assuming the write example above has happened):"<<std::endl;
-	std::cout<<"                Request URI:  'http://127.0.0.1:8080/?read=a,b'"<<std::endl;
+	std::cout<<"                Request URI:      'http://127.0.0.1:8080/?read=a,b'"<<std::endl;
 	std::cout<<"                Response String:  '[\"a\":\"123\",\"b\":\"456\"]'"<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"        Example (assuming the write example above has not happend):"<<std::endl;
-	std::cout<<"                Request URI:  'http://127.0.0.1:8080/?read=a,b'"<<std::endl;
+	std::cout<<"                Request URI:      'http://127.0.0.1:8080/?read=a,b'"<<std::endl;
 	std::cout<<"                Response String:  '[\"a\":\"\",\"b\":\"\"]'"<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"        A javascript library (lonestar.js) has also been included."<<std::endl;

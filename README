@@ -31,6 +31,10 @@ AUTHENTICATION
         Lonestar has simple HMAC-SHA3-512 authentication. If no key file is given, then authentication is disabled.
         To use authentication, you need to make a key file.
 
+        For the web side, you can attain the nonce by using the following GET request:
+            Request URI:      'http://127.0.0.1:8080/?nonce=true'
+            Response String:  Integer nonce value.
+
 RUNNING
         Run lonestar on localhost:8081 with web root in folder "root" with read/write permissions:
                 ./lonestar --ip 127.0.0.1 --port 8081 --web_root root --permissions 6
@@ -70,11 +74,11 @@ READING
         If there are no read permissions, a 401 UNAUTHORIZED error code will be returned.
 
         Example (assuming the write example above has happened):
-                Request URI:  'http://127.0.0.1:8080/?read=a,b'
+                Request URI:      'http://127.0.0.1:8080/?read=a,b'
                 Response String:  '["a":"123","b":"456"]'
 
         Example (assuming the write example above has not happend):
-                Request URI:  'http://127.0.0.1:8080/?read=a,b'
+                Request URI:      'http://127.0.0.1:8080/?read=a,b'
                 Response String:  '["a":"","b":""]'
 
         A javascript library (lonestar.js) has also been included.
