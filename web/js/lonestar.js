@@ -6,76 +6,118 @@ function lonestar_t(key)
 
 lonestar_t.prototype.read=function(read_value,callback)
 {
-	var xmlhttp=new XMLHttpRequest();
+	var myself=this;
 
-	xmlhttp.onreadystatechange=function()
-	{
-		if(xmlhttp.readyState==4&&xmlhttp.status==200)
-			if(callback)
-				callback(xmlhttp.responseText);
-	};
+	this.get_nonce
+	(
+		function(nonce)
+		{
+			var xmlhttp=new XMLHttpRequest();
 
-	var request="read="+read_value;
+			xmlhttp.onreadystatechange=function()
+			{
+				if(xmlhttp.readyState==4&&xmlhttp.status==200)
+					if(callback)
+						callback(xmlhttp.responseText);
+			};
 
-	var auth_str="";
-	if(this.key)
-		auth_str="&auth="+to_hex_string(hmac_sha3_512(this.key,request));
+			var request="read="+read_value;
 
-	xmlhttp.open("GET","?"+request+auth_str);
-	xmlhttp.send();
+			var auth_str="";
+			if(myself.key)
+				auth_str="&auth="+to_hex_string(hmac_sha3_512(myself.key,request+nonce));
+
+			xmlhttp.open("GET","?"+request+auth_str);
+			xmlhttp.send();
+		}
+	);
 }
 
 lonestar_t.prototype.write=function(write_value,write_array,callback)
 {
-	var xmlhttp=new XMLHttpRequest();
+	var myself=this;
 
-	xmlhttp.onreadystatechange=function()
-	{
-		if(xmlhttp.readyState==4&&xmlhttp.status==200)
-			if(callback)
-				callback(xmlhttp.responseText);
-	};
+	this.get_nonce
+	(
+		function(nonce)
+		{
+			var xmlhttp=new XMLHttpRequest();
 
-	var write_data=JSON.stringify(write_array);
-	var request="write="+write_value;
+			xmlhttp.onreadystatechange=function()
+			{
+				if(xmlhttp.readyState==4&&xmlhttp.status==200)
+					if(callback)
+						callback(xmlhttp.responseText);
+			};
 
-	var auth_str="";
-	if(this.key)
-		auth_str="&auth="+to_hex_string(hmac_sha3_512(this.key,request+write_data));
+			var write_data=JSON.stringify(write_array);
+			var request="write="+write_value;
 
-	xmlhttp.open("POST","?"+request+auth_str);
-	xmlhttp.setRequestHeader("Content-Type","application/json");
-	xmlhttp.send(write_data);
-	console.log("?"+request+auth_str);
-	console.log(write_data);
+			var auth_str="";
+			if(myself.key)
+				auth_str="&auth="+to_hex_string(hmac_sha3_512(myself.key,request+write_data+nonce));
+
+			xmlhttp.open("POST","?"+request+auth_str);
+			xmlhttp.setRequestHeader("Content-Type","application/json");
+			xmlhttp.send(write_data);
+			console.log("?"+request+auth_str);
+			console.log(write_data);
+		}
+	);
 }
 
 lonestar_t.prototype.write_and_read=function(write_value,write_array,read_value,callback)
 {
-	var xmlhttp=new XMLHttpRequest();
+	var myself=this;
 
-	xmlhttp.onreadystatechange=function()
-	{
-		if(xmlhttp.readyState==4&&xmlhttp.status==200)
-			if(callback)
-				callback(xmlhttp.responseText);
-	};
+	this.get_nonce
+	(
+		function(nonce)
+		{
+			var xmlhttp=new XMLHttpRequest();
 
-	var write_data=JSON.stringify(write_array);
-	var request="write="+write_value+"&read="+read_value;
+			xmlhttp.onreadystatechange=function()
+			{
+				if(xmlhttp.readyState==4&&xmlhttp.status==200)
+					if(callback)
+						callback(xmlhttp.responseText);
+			};
 
-	var auth_str="";
-	if(this.key)
-		auth_str="&auth="+to_hex_string(hmac_sha3_512(this.key,request+write_data));
+			var write_data=JSON.stringify(write_array);
+			var request="write="+write_value+"&read="+read_value;
 
-	xmlhttp.open("POST","?"+request+auth_str);
-	xmlhttp.setRequestHeader("Content-Type","application/json");
-	xmlhttp.send(write_data);
+			var auth_str="";
+			if(myself.key)
+				auth_str="&auth="+to_hex_string(hmac_sha3_512(myself.key,request+write_data+nonce));
+
+			xmlhttp.open("POST","?"+request+auth_str);
+			xmlhttp.setRequestHeader("Content-Type","application/json");
+			xmlhttp.send(write_data);
+		}
+	);
 }
 
 function to_hex_string(byte_array)
 {
 	return byte_array.toString(CryptoJS.enc.Hex);
+}
+
+lonestar_t.prototype.get_nonce=function(callback)
+{
+	var xmlhttp=new XMLHttpRequest();
+
+	xmlhttp.onreadystatechange=function()
+	{
+		if(xmlhttp.readyState==4&&xmlhttp.status==200)
+			if(callback)
+			{
+				console.log(xmlhttp.responseText);
+				callback(parseInt(xmlhttp.responseText,10));
+			}
+	};
+
+	xmlhttp.open("GET","?nonce=true");
+	xmlhttp.send();
 }
 
 /*

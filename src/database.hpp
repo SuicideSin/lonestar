@@ -10,17 +10,15 @@
 #include "mongoose/mongoose.h"
 #include "permissions.hpp"
 #include "string.hpp"
-#include <iostream>
+
 class database_t
 {
 	public:
 		permissions_t permissions;
 
 		database_t(const std::string& key,const permissions_t& permissions):
-			permissions(permissions),key_m(key)
-		{
-			std::cout<<"TESTING|"<<key_m<<"|"<<std::endl;
-		}
+			permissions(permissions),key_m(key),nonce_m(0)
+		{}
 
 		std::string read(const std::string& comma_list)
 		{
@@ -79,7 +77,12 @@ class database_t
 
 		bool authenticate(const std::string& plain,const std::string& challenge)
 		{
-			return (to_hex_string(hmac_sha3_512(key_m,plain))==challenge);
+			bool authenticated=(to_hex_string(hmac_sha3_512(key_m,plain+std::to_string(nonce_m)))==challenge);
+
+			if(authenticated)
+				++nonce_m;
+
+			return authenticated;
 		}
 
 		bool allow_authentication() const
@@ -87,9 +90,15 @@ class database_t
 			return key_m.size()>0;
 		}
 
+		uint32_t get_nonce() const
+		{
+			return nonce_m;
+		}
+
 	private:
 		std::map<std::string,std::string> data_m;
 		const std::string key_m;
+		uint32_t nonce_m;
 };
 
 inline database_t& get_database(mg_connection* connection)

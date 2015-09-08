@@ -80,7 +80,10 @@ int main(int argc,char* argv[])
 			std::cout<<"/";
 		if((permissions&P_WRITE)>0)
 			std::cout<<"write";
-		std::cout<<" permissions."<<std::endl;
+		std::cout<<" permissions";
+		if(key_file.size()>0)
+			std::cout<<" and key file \""<<key_file<<"\"";
+		std::cout<<"."<<std::endl;
 
 		while(mg_poll_server(server,1000))
 		{}

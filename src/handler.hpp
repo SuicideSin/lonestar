@@ -20,6 +20,13 @@ inline void mg_send_status(mg_connection* connection,const std::string& status)
 	mg_printf(connection,"HTTP/1.1 %s\r\nContent-Length: 0\r\n\r\n\r\n\r\n",status.c_str());
 }
 
+inline void handle_nonce(mg_connection* connection)
+{
+	auto& database=get_database(connection);
+	mg_send(connection,std::to_string(database.get_nonce()),"text/plain");
+	std::cout<<"\tSending nonce...done."<<std::endl;
+}
+
 inline bool handle_read(mg_connection* connection,const bool authenticated,const std::string& request,
 	const std::string& query)
 {
@@ -96,6 +103,7 @@ inline int client_handler(mg_connection* connection,mg_event event)
 		std::string method=(connection->request_method);
 		std::string request(connection->uri);
 		std::string post_data;
+		std::string nonce_string=get_query(connection,"nonce");
 
 		if(method=="POST")
 			post_data=std::string(connection->content,connection->content_len);
@@ -126,13 +134,19 @@ inline int client_handler(mg_connection* connection,mg_event event)
 		std::cout<<" "<<method<<" "<<request<<"."<<std::endl;
 		std::cout<<"\tQuery:  \""<<query<<"\""<<std::endl;
 
+		if(method=="POST")
+			std::cout<<"\tPost:  \""<<post_data<<"\""<<std::endl;
+
+		if(nonce_string!=""&&nonce_string!="false")
+		{
+			handle_nonce(connection);
+			return MG_TRUE;
+		}
+
 		bool wrote=false;
 
 		if(method=="POST")
-		{
-			std::cout<<"\tPost:  \""<<post_data<<"\""<<std::endl;
 			wrote=handle_write(connection,authenticated,request,query,post_data);
-		}
 
 		bool read=handle_read(connection,authenticated,request,query);
 
