@@ -32,6 +32,10 @@ inline void print_help()
 	std::cout<<"        --help"<<std::endl;
 	std::cout<<"                Show this menu."<<std::endl;
 	std::cout<<std::endl;
+	std::cout<<"AUTHENTICATION"<<std::endl;
+	std::cout<<"        Lonestar has simple HMAC-SHA3-512 authentication. If no key file is given, then authentication is disabled."<<std::endl;
+	std::cout<<"        To use authentication, you need to make a key file."<<std::endl;
+	std::cout<<std::endl;
 	std::cout<<"RUNNING"<<std::endl;
 	std::cout<<"        Run lonestar on localhost:8081 with web root in folder \"root\" with read/write permissions:"<<std::endl;
 	std::cout<<"                ./lonestar --ip 127.0.0.1 --port 8081 --web_root root --permissions 6"<<std::endl;
@@ -40,6 +44,12 @@ inline void print_help()
 	std::cout<<"        Note, this is the default option, so the two commands below are equivalent:"<<std::endl;
 	std::cout<<"                ./lonestar --ip 0.0.0.0 --port 8080 --web_root web --permissions 4"<<std::endl;
 	std::cout<<"                ./lonestar"<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<"        To create a key file, run the following:"<<std::endl;
+	std::cout<<"                ./make_key > my_key.key"<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<"        To run lonestar with a key file, run the following:"<<std::endl;
+	std::cout<<"                ./lonestar --key my_key.key"<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"WRITING"<<std::endl;
 	std::cout<<"        To write, pass a query string of \"write\" with a comma separated list of values."<<std::endl;
@@ -53,19 +63,29 @@ inline void print_help()
 	std::cout<<"                Request URI:  'http://127.0.0.1:8080/?write=a,b'"<<std::endl;
 	std::cout<<"                Post String:  '[\"123\",\"456\"]'"<<std::endl;
 	std::cout<<std::endl;
+	std::cout<<"        A javascript library (lonestar.js) has also been included."<<std::endl;
+	std::cout<<"        Below is the example above using this library."<<std::endl;
+	std::cout<<"                var lonestar=new lonestar_t(\"keyphrase\");"<<std::endl;
+	std::cout<<"                lonestar.write(\"a,b\",[\"123\",\"456\"],function(response){console.log(response);});"<<std::endl;
+	std::cout<<std::endl;
 	std::cout<<"READING"<<std::endl;
 	std::cout<<"        To read, pass a query string of \"read\" with a comma separated list of values."<<std::endl;
 	std::cout<<"        You will then be returned a JSON array of strings."<<std::endl;
-	std::cout<<"        If a value in the comma separated list does not exist, a value of "" will be returned."<<std::endl;
+	std::cout<<"        If a value in the comma separated list does not exist, a value of \"\" will be returned."<<std::endl;
 	std::cout<<"        If there are no read permissions, a 401 UNAUTHORIZED error code will be returned."<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"        Example (assuming the write example above has happened):"<<std::endl;
 	std::cout<<"                Request URI:  'http://127.0.0.1:8080/?read=a,b'"<<std::endl;
-	std::cout<<"                Post String:  '[\"a\":\"123\",\"b\":\"456\"]'"<<std::endl;
+	std::cout<<"                Response String:  '[\"a\":\"123\",\"b\":\"456\"]'"<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"        Example (assuming the write example above has not happend):"<<std::endl;
 	std::cout<<"                Request URI:  'http://127.0.0.1:8080/?read=a,b'"<<std::endl;
-	std::cout<<"                Post String:  '[\"a\":\"\",\"b\":\"\"]'"<<std::endl;
+	std::cout<<"                Response String:  '[\"a\":\"\",\"b\":\"\"]'"<<std::endl;
+	std::cout<<std::endl;
+	std::cout<<"        A javascript library (lonestar.js) has also been included."<<std::endl;
+	std::cout<<"        Below are the examples above using this library."<<std::endl;
+	std::cout<<"                var lonestar=new lonestar_t(\"keyphrase\");"<<std::endl;
+	std::cout<<"                lonestar.read(\"a,b\",function(response){console.log(response);});"<<std::endl;
 	std::cout<<std::endl;
 	std::cout<<"BUILDING"<<std::endl;
 	std::cout<<"        make"<<std::endl;
@@ -78,6 +98,7 @@ inline void print_help()
 	std::cout<<"        Based on Superstar:        http://robotmoose.com/"<<std::endl;
 	std::cout<<"        Uses Mongoose (included):  https://github.com/cesanta/mongoose"<<std::endl;
 	std::cout<<"        Uses JSONCPP (included):   https://github.com/open-source-parsers/jsoncpp"<<std::endl;
+	std::cout<<"        Uses CryptoJS (included):  https://code.google.com/p/crypto-js/"<<std::endl;
 }
 
 #endif

@@ -20,11 +20,14 @@ int main(int argc,char* argv[])
 		std::string port="8080";
 		std::string permissions_string="4";
 		std::string web_root="web";
+		std::string key_file="";
+		std::string key="";
 
 		cli.move("ip",ip);
 		cli.move("port",port);
 		cli.move("permissions",permissions_string);
 		cli.move("web_root",web_root);
+		cli.move("key",key_file);
 
 		validate_ip(ip);
 		validate_port(port);
@@ -42,7 +45,11 @@ int main(int argc,char* argv[])
 		cli.throw_unknown();
 
 		permissions_t permissions=(permissions_t)std::stoi(permissions_string);
-		database_t database(permissions);
+
+		if(key_file.size()>0)
+			key=read_file(key_file);
+
+		database_t database(key,permissions);
 
 		mg_server* server=mg_create_server(&database,client_handler);
 

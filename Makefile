@@ -8,10 +8,13 @@ ifeq ($(OS),Windows_NT)
 	LIB+=-lWs2_32
 endif
 
-all: lonestar
+all: lonestar make_key
 
-lonestar: $(SRC)/main.cpp $(SRC)/hash.cpp $(INC)/mongoose/mongoose.c $(INC)/jsoncpp/json_reader.cpp $(INC)/jsoncpp/json_tool.h $(INC)/jsoncpp/json_value.cpp $(INC)/jsoncpp/json_writer.cpp
+lonestar: $(SRC)/lonestar.cpp $(SRC)/hash.cpp $(INC)/mongoose/mongoose.c $(INC)/jsoncpp/json_reader.cpp $(INC)/jsoncpp/json_tool.h $(INC)/jsoncpp/json_value.cpp $(INC)/jsoncpp/json_writer.cpp
+	$(CXX) $(CFLAGS) $(LIB) $^ -o $@
+
+make_key: $(SRC)/make_key.cpp $(SRC)/hash.cpp
 	$(CXX) $(CFLAGS) $(LIB) $^ -o $@
 
 clean:
-	-rm -rf lonestar
+	-rm -rf lonestar make_key

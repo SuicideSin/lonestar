@@ -5,18 +5,22 @@
 #include <string>
 #include <vector>
 
+#include "hash.hpp"
 #include "json.hpp"
 #include "mongoose/mongoose.h"
 #include "permissions.hpp"
 #include "string.hpp"
-
+#include <iostream>
 class database_t
 {
 	public:
 		permissions_t permissions;
 
-		database_t(const permissions_t& permissions):permissions(permissions)
-		{}
+		database_t(const std::string& key,const permissions_t& permissions):
+			permissions(permissions),key_m(key)
+		{
+			std::cout<<"TESTING|"<<key_m<<"|"<<std::endl;
+		}
 
 		std::string read(const std::string& comma_list)
 		{
@@ -73,8 +77,19 @@ class database_t
 			return false;
 		}
 
+		bool authenticate(const std::string& plain,const std::string& challenge)
+		{
+			return (to_hex_string(hmac_sha3_512(key_m,plain))==challenge);
+		}
+
+		bool allow_authentication() const
+		{
+			return key_m.size()>0;
+		}
+
 	private:
 		std::map<std::string,std::string> data_m;
+		const std::string key_m;
 };
 
 inline database_t& get_database(mg_connection* connection)

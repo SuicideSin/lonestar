@@ -20,7 +20,8 @@ inline void mg_send_status(mg_connection* connection,const std::string& status)
 	mg_printf(connection,"HTTP/1.1 %s\r\nContent-Length: 0\r\n\r\n\r\n\r\n",status.c_str());
 }
 
-inline bool handle_read(mg_connection* connection,const std::string& request,const std::string& query)
+inline bool handle_read(mg_connection* connection,const bool authenticated,const std::string& request,
+	const std::string& query)
 {
 	std::string comma_list=get_query(connection,"read");
 
@@ -29,7 +30,7 @@ inline bool handle_read(mg_connection* connection,const std::string& request,con
 		auto& database=get_database(connection);
 		std::cout<<"\tReading \""<<comma_list<<"\"..."<<std::flush;
 
-		if((database.permissions&P_READ)!=0)
+		if((database.permissions&P_READ)!=0||(authenticated&&database.allow_authentication()))
 		{
 			mg_send(connection,database.read(comma_list),"application/json");
 			std::cout<<"done."<<std::endl;
@@ -46,7 +47,8 @@ inline bool handle_read(mg_connection* connection,const std::string& request,con
 	return false;
 }
 
-inline bool handle_write(mg_connection* connection,const std::string& request,const std::string& query,const std::string& post_data)
+inline bool handle_write(mg_connection* connection,const bool authenticated,const std::string& request,
+	const std::string& query,const std::string& post_data)
 {
 	std::string comma_list=get_query(connection,"write");
 
@@ -55,7 +57,7 @@ inline bool handle_write(mg_connection* connection,const std::string& request,co
 		auto& database=get_database(connection);
 		std::cout<<"\tWriting \""<<comma_list<<"\"..."<<std::flush;
 
-		if((database.permissions&P_WRITE)!=0)
+		if((database.permissions&P_WRITE)!=0||(authenticated&&database.allow_authentication()))
 		{
 			if(!database.write(comma_list,post_data))
 			{
@@ -102,13 +104,14 @@ inline int client_handler(mg_connection* connection,mg_event event)
 		if(connection->query_string!=nullptr)
 			query=connection->query_string;
 
+		auto& database=get_database(connection);
 		bool authenticated=false;
 		std::string auth=get_query(connection,"auth");
 		if(auth.size()>0)
 		{
 				std::string query_no_auth=replace_all(query,"&auth="+auth,"");
 				query_no_auth=replace_all(query_no_auth,"auth="+auth,"");
-				authenticated=(to_hex_string(hmac_sha3_512("key",query_no_auth+post_data))==auth);
+				authenticated=database.authenticate(query_no_auth+post_data,auth);
 		}
 
 		std::cout<<client;
@@ -128,10 +131,10 @@ inline int client_handler(mg_connection* connection,mg_event event)
 		if(method=="POST")
 		{
 			std::cout<<"\tPost:  \""<<post_data<<"\""<<std::endl;
-			wrote=handle_write(connection,request,query,post_data);
+			wrote=handle_write(connection,authenticated,request,query,post_data);
 		}
 
-		bool read=handle_read(connection,request,query);
+		bool read=handle_read(connection,authenticated,request,query);
 
 		if(wrote||read)
 			return MG_TRUE;
